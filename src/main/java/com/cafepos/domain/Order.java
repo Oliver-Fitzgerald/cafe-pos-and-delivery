@@ -1,5 +1,8 @@
+package com.cafepos.domain;
+
 import java.util.ArrayList;
 import java.util.List;
+import com.cafepos.common.Money;
 
 
 public final class Order {

@@ -1,3 +1,5 @@
+package com.cafepos.common;
+
 import java.util.Objects;
 import java.math.MathContext;
 import java.math.BigDecimal;
@@ -17,7 +19,7 @@ public final class Money implements Comparable<Money> {
     public static Money of(double value) throws IllegalArgumentException { 
 
         sanatize(value);
-        return new Money(new BigDecimal(value, context));
+        return new Money(new BigDecimal(Double.toString(value), context));
     }
     /** zero
      * Constructs a Money object that represents the amount 0
@@ -76,9 +78,7 @@ public final class Money implements Comparable<Money> {
 
     @Override
     public String toString() {
-        return "Money: {" +
-            "\"amount\": \"" + amount.toString() +
-            "\" }";
+        return amount.toString();
     }
 
     @Override

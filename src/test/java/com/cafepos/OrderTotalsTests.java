@@ -3,7 +3,7 @@ package com.cafepos;
 import com.cafepos.common.Money;
 import com.cafepos.domain.LineItem;
 import com.cafepos.domain.Order;
-import com.cafepos.product.SimpleProduct;
+import com.cafepos.domain.SimpleProduct;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 

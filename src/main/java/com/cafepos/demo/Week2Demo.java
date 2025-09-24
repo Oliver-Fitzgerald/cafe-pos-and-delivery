@@ -3,7 +3,7 @@ package com.cafepos.demo;
 import com.cafepos.domain.LineItem;
 import com.cafepos.domain.Order;
 import com.cafepos.domain.OrderIds;
-import com.cafepos.product.SimpleProduct;
+import com.cafepos.domain.SimpleProduct;
 import com.cafepos.catalog.InMemoryCatalog;
 import com.cafepos.catalog.Catalog;
 import com.cafepos.common.Money;

@@ -5,8 +5,6 @@ import java.util.List;
 import com.cafepos.common.Money;
 import com.cafepos.payment.PaymentStrategy;
 
-
-
 public final class Order {
 
     private final long id;
@@ -14,6 +12,14 @@ public final class Order {
 
     public Order(long id) { 
         this.id = id;
+    }
+
+    public List<LineItem> items() {
+        return this.items;
+    }
+
+    public long id() {
+        return this.id;
     }
 
     public void addItem(LineItem item) throws IllegalArgumentException { 
@@ -37,12 +43,10 @@ public final class Order {
         return subtotal().add(taxAtPercent(percent));
     }
 
-    public List<LineItem> items() {
-        return this.items;
-    }
-
-    public long id() {
-        return this.id;
+    public void pay(PaymentStrategy strategy) {
+        if (strategy == null)
+            throw new IllegalArgumentException("Strategy required");
+        strategy.pay(this);
     }
 
     public void pay(PaymentStrategy strategy) {

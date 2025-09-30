@@ -3,6 +3,8 @@ package com.cafepos.domain;
 import java.util.ArrayList;
 import java.util.List;
 import com.cafepos.common.Money;
+import com.cafepos.payment.PaymentStrategy;
+
 
 
 public final class Order {
@@ -41,5 +43,11 @@ public final class Order {
 
     public long id() {
         return this.id;
+    }
+
+    public void pay(PaymentStrategy strategy) {
+        if (strategy == null) 
+            throw new IllegalArgumentException("Payment strategy has not been defined");
+        strategy.pay(this);
     }
 }

@@ -1,6 +1,7 @@
 package com.cafepos.domain;
 
 import com.cafepos.common.Money;
+import com.cafepos.decorator.ProductDecorator;
 
 public final class LineItem {
 
@@ -22,7 +23,8 @@ public final class LineItem {
 
     public Money lineTotal() { 
 
-        return product.basePrice().multiply(quantity);
+        Money unitPrice = (product instanceof ProductDecorator p) ?  p.price() : product.basePrice();
+        return unitPrice.multiply(quantity);
     }
 
 }

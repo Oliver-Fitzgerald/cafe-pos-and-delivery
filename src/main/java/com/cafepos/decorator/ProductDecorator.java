@@ -40,5 +40,4 @@ public abstract class ProductDecorator implements Product {
     } 
 
     public abstract Money price();
-    // Concrete decorators will override name() and provide a finalPrice() helper if desired.
 }

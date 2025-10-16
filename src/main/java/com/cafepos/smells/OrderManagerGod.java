@@ -15,12 +15,6 @@ import com.cafepos.payment.PaymentStrategy;
 
 public class OrderManagerGod {
 
-    //Global/Static State: `LAST_DISCOUNT_CODE`, `TAX_PERCENT` are global — risky and hard to test.
-    //Primitive Obsession: `discountCode` strings; `TAX_PERCENT` as primitive; magic numbers for rates.
-    public static int TAX_PERCENT = 10;
-    public static Money LAST_DISCOUNT = null;
-
-    //God Class & Long Method: One method performs creation, pricing, discounting, tax, payment I/O, and printing.
     public static String process(String recipe, int qty, PaymentStrategy paymentType, PricingService pricingService, boolean printReceipt) throws IllegalArgumentException {
 
         if (paymentType == null)
@@ -37,7 +31,6 @@ public class OrderManagerGod {
 
         // Payment
         PricingService.PricingResult pricingResult = pricingService.price(item.lineTotal());
-        LAST_DISCOUNT = pricingResult.discount();
         order.pay(paymentType);
 
         // Receipt

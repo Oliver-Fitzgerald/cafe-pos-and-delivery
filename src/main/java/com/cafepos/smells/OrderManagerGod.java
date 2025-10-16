@@ -5,6 +5,7 @@ import com.cafepos.common.Money;
 import com.cafepos.factory.ProductFactory;
 import com.cafepos.domain.Product;
 import com.cafepos.discount.DiscountPolicy;
+import com.cafepos.tax.TaxPolicy;
 
 public class OrderManagerGod {
 
@@ -14,7 +15,7 @@ public class OrderManagerGod {
     public static DiscountPolicy LAST_DISCOUNT_CODE = null;
 
     //God Class & Long Method: One method performs creation, pricing, discounting, tax, payment I/O, and printing.
-    public static String process(String recipe, int qty, String paymentType, DiscountPolicy discountCode, boolean printReceipt) {
+    public static String process(String recipe, int qty, String paymentType, DiscountPolicy discountCode, TaxPolicy taxPolicy, boolean printReceipt) {
 
         ProductFactory factory = new ProductFactory();
         Product product = factory.create(recipe);
@@ -33,15 +34,14 @@ public class OrderManagerGod {
             qty = 1;
         Money subtotal = unitPrice.multiply(qty);
 
-        // Discount
+        // Apply Discount
         LAST_DISCOUNT_CODE = discountCode;
         Money discount = discountCode.discountOf(subtotal);
         Money discounted = subtotal.subtract(discount);
 
-        //Duplicated Logic: Money and BigDecimal manipulations scattered inline.
-        //Feature Envy: Using data from money directly instead of through it's interfaces
-        var tax = Money.of(discounted.getAmount().multiply(java.math.BigDecimal.valueOf(TAX_PERCENT)).divide(java.math.BigDecimal.valueOf(100)).doubleValue());
-        var total = discounted.add(tax);
+        // Add Tax
+        Money tax = taxPolicy.taxOn(discounted);
+        Money total = discounted.add(tax);
 
         //Shotgun Surgery and Duplicated Logic: PaymentStrategy already handles this logic
         if (paymentType != null) {

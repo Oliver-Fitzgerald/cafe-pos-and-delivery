@@ -50,8 +50,20 @@ public final class Money implements Comparable<Money> {
      * @return a new Money object containing the result of the multiplication
      * @throws IllegalArgumentException if the quantity passed is negative
      */
-    public Money add(Money other) throws IllegalArgumentException { 
-        return of(this.amount.doubleValue() + other.getAmount().doubleValue());
+    public Money add(Money money) throws IllegalArgumentException { 
+        return of(this.amount.doubleValue() + money.getAmount().doubleValue());
+    }
+
+    /**
+     * subtract
+     * Subtracts the passed Money object's amount from this Money object and returns the new Money object.
+     * Note: It leaves the original Money objects unchanged
+     * @param money The money to be subtracted from this Money
+     * @return a new Money object containing the result of the subtraction
+     * @throws IllegalArgumentException if the result is negative
+     */
+    public Money subtract(Money money) throws IllegalArgumentException { 
+        return of(this.amount.doubleValue() - money.getAmount().doubleValue());
     }
 
     /**
@@ -64,6 +76,36 @@ public final class Money implements Comparable<Money> {
      */
     public Money multiply(double qty) throws IllegalArgumentException { 
         return of(this.amount.multiply(BigDecimal.valueOf(qty)).doubleValue());
+    }
+
+    /**
+     * divide
+     * Divides this Money object's amount by the passed Money object  and returns a new Money object.
+     * Note: It leaves the original Money objects unchanged
+     * @param divisor the Money object this this money object will be divided by
+     * @return a new Money object containing the result of the division
+     * @throws IllegalArgumentException if the passed divisor is less than or equal to zero or if result is less than 0
+     */
+    public Money divide(Money divisor) throws IllegalArgumentException { 
+        if (divisor.compareTo(Money.of(0)) == 0)
+            throw new IllegalArgumentException("Divisor must be greater than 0");
+
+        return of(this.amount.divide(divisor.getAmount()).doubleValue());
+    }
+
+    /**
+     * divide
+     * Divides this Money object's amount by the passed Money object  and returns a new Money object.
+     * Note: It leaves the original Money objects unchanged
+     * @param divisor the Money object this this money object will be divided by
+     * @return a new Money object containing the result of the division
+     * @throws IllegalArgumentException if the passed divisor is less than or equal to zero or if result is less than 0
+     */
+    public Money divide(double divisor) throws IllegalArgumentException { 
+        if (divisor <= 0)
+            throw new IllegalArgumentException("Divisor must be greater than 0");
+
+        return of(this.amount.divide(BigDecimal.valueOf(divisor)).doubleValue());
     }
 
     /**

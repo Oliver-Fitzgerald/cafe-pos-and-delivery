@@ -4,16 +4,17 @@ package com.cafepos.smells;
 import com.cafepos.common.Money;
 import com.cafepos.factory.ProductFactory;
 import com.cafepos.domain.Product;
+import com.cafepos.discount.DiscountPolicy;
 
 public class OrderManagerGod {
 
     //Global/Static State: `LAST_DISCOUNT_CODE`, `TAX_PERCENT` are global — risky and hard to test.
     //Primitive Obsession: `discountCode` strings; `TAX_PERCENT` as primitive; magic numbers for rates.
     public static int TAX_PERCENT = 10;
-    public static String LAST_DISCOUNT_CODE = null;
+    public static DiscountPolicy LAST_DISCOUNT_CODE = null;
 
     //God Class & Long Method: One method performs creation, pricing, discounting, tax, payment I/O, and printing.
-    public static String process(String recipe, int qty, String paymentType, String discountCode, boolean printReceipt) {
+    public static String process(String recipe, int qty, String paymentType, DiscountPolicy discountCode, boolean printReceipt) {
 
         ProductFactory factory = new ProductFactory();
         Product product = factory.create(recipe);
@@ -32,36 +33,10 @@ public class OrderManagerGod {
             qty = 1;
         Money subtotal = unitPrice.multiply(qty);
 
-
-        //Feature Envy / Shotgun Surgery: Tax/discount rules embedded inline; any change requires editing this method.
-        Money discount = Money.zero();
-        if (discountCode != null) {
-            //Primitive Obsession: `discountCode` strings; `TAX_PERCENT` as primitive; magic numbers for rates.
-            if (discountCode.equalsIgnoreCase("LOYAL5")) {
-                //Duplicated Logic: Money and BigDecimal manipulations scattered inline.
-                //Feature Envy: Using data from money directly instead of through it's interfaces
-                discount = Money.of(subtotal.getAmount().multiply(java.math.BigDecimal.valueOf(5)).divide(java.math.BigDecimal.valueOf(100)).doubleValue());
-
-            //Primitive Obsession: `discountCode` strings; `TAX_PERCENT` as primitive; magic numbers for rates.
-            } else if (discountCode.equalsIgnoreCase("COUPON1")) {
-                discount = Money.of(1.00);
-
-            //Primitive Obsession: `discountCode` strings; `TAX_PERCENT` as primitive; magic numbers for rates.
-            } else if (discountCode.equalsIgnoreCase("NONE")) {
-                discount = Money.zero();
-
-            } else {
-                discount = Money.zero();
-            }
-
-            LAST_DISCOUNT_CODE = discountCode;
-        }
-
-        //Duplicated Logic: Money and BigDecimal manipulations scattered inline.
-        //Feature Envy: Using data from money directly instead of through it's interfaces
-        Money discounted = Money.of(subtotal.getAmount().subtract(discount.getAmount()).doubleValue());
-        if (discounted.getAmount().signum() < 0)
-            discounted = Money.zero();
+        // Discount
+        LAST_DISCOUNT_CODE = discountCode;
+        Money discount = discountCode.discountOf(subtotal);
+        Money discounted = subtotal.subtract(discount);
 
         //Duplicated Logic: Money and BigDecimal manipulations scattered inline.
         //Feature Envy: Using data from money directly instead of through it's interfaces

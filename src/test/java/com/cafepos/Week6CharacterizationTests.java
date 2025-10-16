@@ -8,6 +8,9 @@ import com.cafepos.discount.LoyaltyPercentDiscount;
 import com.cafepos.discount.FixedCouponDiscount;
 import com.cafepos.tax.FixedRateTaxPolicy;
 import com.cafepos.checkout.PricingService;
+import com.cafepos.payment.CashPayment;
+import com.cafepos.payment.CardPayment;
+import com.cafepos.payment.WalletPayment;
 // juinit
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,7 +19,7 @@ public class Week6CharacterizationTests {
 
     @Test
     void no_discount_cash_payment() {
-        String receipt = OrderManagerGod.process("ESP+SHOT+OAT", 1, "CASH", new PricingService(new NoDiscount(), new FixedRateTaxPolicy(10)), false);
+        String receipt = OrderManagerGod.process("ESP+SHOT+OAT", 1, new CashPayment(), new PricingService(new NoDiscount(), new FixedRateTaxPolicy(10)), false);
         assertTrue(receipt.startsWith("Order (ESP+SHOT+OAT) x1"));
         assertTrue(receipt.contains("Subtotal: 3.80"));
         assertTrue(receipt.contains("Tax (10%): 0.38"));
@@ -26,7 +29,7 @@ public class Week6CharacterizationTests {
     @Test
     void loyalty_discount_card_payment() {
 
-        String receipt = OrderManagerGod.process("LAT+L", 2, "CARD", new PricingService(new LoyaltyPercentDiscount(5), new FixedRateTaxPolicy(10)), false);
+        String receipt = OrderManagerGod.process("LAT+L", 2, new CardPayment("1212 1212 1111 2222"), new PricingService(new LoyaltyPercentDiscount(5), new FixedRateTaxPolicy(10)), false);
         // Latte (Large) base = 3.20 + 0.70 = 3.90, qty 2 => 7.80
         // 5% discount => 0.39, discounted=7.41; tax 10% => 0.74; total=8.15
         assertTrue(receipt.contains("Subtotal: 7.80"));
@@ -38,7 +41,7 @@ public class Week6CharacterizationTests {
     @Test
     void coupon_fixed_amount_and_qty_clamp() {
 
-        String receipt = OrderManagerGod.process("ESP+SHOT", 0, "WALLET", new PricingService(new FixedCouponDiscount(Money.of(1)), new FixedRateTaxPolicy(10)), false);
+        String receipt = OrderManagerGod.process("ESP+SHOT", 1, new WalletPayment("WALLET"), new PricingService(new FixedCouponDiscount(Money.of(1)), new FixedRateTaxPolicy(10)), false);
         // qty=0 clamped to 1; Espresso+SHOT = 2.50 + 0.80 = 3.30; coupon1 => -1 => 2.30; tax=0.23; total=2.53
         assertTrue(receipt.contains("Order (ESP+SHOT) x1"));
         assertTrue(receipt.contains("Subtotal: 3.30"));

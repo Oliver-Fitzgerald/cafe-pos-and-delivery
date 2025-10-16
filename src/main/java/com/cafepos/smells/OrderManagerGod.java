@@ -4,10 +4,14 @@ package com.cafepos.smells;
 import com.cafepos.common.Money;
 import com.cafepos.factory.ProductFactory;
 import com.cafepos.domain.Product;
+import com.cafepos.domain.LineItem;
+import com.cafepos.domain.Order;
+import com.cafepos.domain.OrderIds;
 import com.cafepos.discount.DiscountPolicy;
 import com.cafepos.tax.TaxPolicy;
 import com.cafepos.checkout.PricingService;
 import com.cafepos.checkout.ReceiptPrinter;
+import com.cafepos.payment.PaymentStrategy;
 
 public class OrderManagerGod {
 
@@ -17,49 +21,24 @@ public class OrderManagerGod {
     public static Money LAST_DISCOUNT = null;
 
     //God Class & Long Method: One method performs creation, pricing, discounting, tax, payment I/O, and printing.
-    public static String process(String recipe, int qty, String paymentType, PricingService pricingService, boolean printReceipt) {
+    public static String process(String recipe, int qty, PaymentStrategy paymentType, PricingService pricingService, boolean printReceipt) throws IllegalArgumentException {
 
+        if (paymentType == null)
+            throw new IllegalArgumentException("paymentType cannot be null");
+
+        // Create product
         ProductFactory factory = new ProductFactory();
         Product product = factory.create(recipe);
+        LineItem item = new LineItem(product, qty);
 
-        //Duplicated Logic: Already existing Line item logic for this.
-        Money unitPrice;
-        try {
-            var priced = product instanceof com.cafepos.decorator.ProductDecorator p ? p.price() : product.basePrice();
-            unitPrice = priced;
-        } catch (Exception e) {
-            unitPrice = product.basePrice();
-        }
+        // Create order
+        Order order = new Order(OrderIds.next());
+        order.addItem(item);
 
-        //Duplicated Logic: Already existing Line item logic for this.
-        if (qty <= 0)
-            qty = 1;
-        Money subtotal = unitPrice.multiply(qty);
-
-        PricingService.PricingResult pricingResult = pricingService.price(subtotal);
-        Money total = pricingResult.total();
+        // Payment
+        PricingService.PricingResult pricingResult = pricingService.price(item.lineTotal());
         LAST_DISCOUNT = pricingResult.discount();
-
-        //Shotgun Surgery and Duplicated Logic: PaymentStrategy already handles this logic
-        if (paymentType != null) {
-
-            //Primitive Obsession: `discountCode` strings; `TAX_PERCENT` as primitive; magic numbers for rates.
-            if (paymentType.equalsIgnoreCase("CASH")) {
-                System.out.println("[Cash] Customer paid " + total + " EUR");
-
-            //Primitive Obsession: `discountCode` strings; `TAX_PERCENT` as primitive; magic numbers for rates.
-            } else if (paymentType.equalsIgnoreCase("CARD")) {
-                System.out.println("[Card] Customer paid " + total + " EUR with card ****1234");
-
-            //Primitive Obsession: `discountCode` strings; `TAX_PERCENT` as primitive; magic numbers for rates.
-            } else if (paymentType.equalsIgnoreCase("WALLET")) {
-                System.out.println("[Wallet] Customer paid " + total + " EUR via wallet user-wallet-789");
-
-            } else {
-                System.out.println("[UnknownPayment] " + total);
-
-            }
-        }
+        order.pay(paymentType);
 
         // Receipt
         String receipt = new ReceiptPrinter().format(recipe, qty, pricingResult);

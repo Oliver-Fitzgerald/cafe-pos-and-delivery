@@ -6,16 +6,18 @@ import com.cafepos.factory.ProductFactory;
 import com.cafepos.domain.Product;
 import com.cafepos.discount.DiscountPolicy;
 import com.cafepos.tax.TaxPolicy;
+import com.cafepos.checkout.PricingService;
+import com.cafepos.checkout.ReceiptPrinter;
 
 public class OrderManagerGod {
 
     //Global/Static State: `LAST_DISCOUNT_CODE`, `TAX_PERCENT` are global — risky and hard to test.
     //Primitive Obsession: `discountCode` strings; `TAX_PERCENT` as primitive; magic numbers for rates.
     public static int TAX_PERCENT = 10;
-    public static DiscountPolicy LAST_DISCOUNT_CODE = null;
+    public static Money LAST_DISCOUNT = null;
 
     //God Class & Long Method: One method performs creation, pricing, discounting, tax, payment I/O, and printing.
-    public static String process(String recipe, int qty, String paymentType, DiscountPolicy discountCode, TaxPolicy taxPolicy, boolean printReceipt) {
+    public static String process(String recipe, int qty, String paymentType, PricingService pricingService, boolean printReceipt) {
 
         ProductFactory factory = new ProductFactory();
         Product product = factory.create(recipe);
@@ -34,14 +36,9 @@ public class OrderManagerGod {
             qty = 1;
         Money subtotal = unitPrice.multiply(qty);
 
-        // Apply Discount
-        LAST_DISCOUNT_CODE = discountCode;
-        Money discount = discountCode.discountOf(subtotal);
-        Money discounted = subtotal.subtract(discount);
-
-        // Add Tax
-        Money tax = taxPolicy.taxOn(discounted);
-        Money total = discounted.add(tax);
+        PricingService.PricingResult pricingResult = pricingService.price(subtotal);
+        Money total = pricingResult.total();
+        LAST_DISCOUNT = pricingResult.discount();
 
         //Shotgun Surgery and Duplicated Logic: PaymentStrategy already handles this logic
         if (paymentType != null) {
@@ -64,23 +61,12 @@ public class OrderManagerGod {
             }
         }
 
-        //Shotgun Surgery and Duplicated Logic: PaymentStrategy already handles this logic
-        StringBuilder receipt = new StringBuilder();
-        receipt.append("Order (").append(recipe).append(") x").append(qty).append("\n");
-        receipt.append("Subtotal: ").append(subtotal).append("\n");
+        // Receipt
+        String receipt = new ReceiptPrinter().format(recipe, qty, pricingResult);
 
+        if (printReceipt)
+            System.out.println(receipt);
 
-        if (discount.getAmount().signum() > 0) {
-            receipt.append("Discount: -").append(discount).append("\n");
-        }
-
-        receipt.append("Tax (").append(TAX_PERCENT).append("%): ").append(tax).append("\n");
-        receipt.append("Total: ").append(total);
-
-        String out = receipt.toString();
-        if (printReceipt) {
-            System.out.println(out);
-        }
-        return out;
+        return receipt;
     }
 }

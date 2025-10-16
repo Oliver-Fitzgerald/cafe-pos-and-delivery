@@ -37,6 +37,10 @@ public final class Money implements Comparable<Money> {
         this.amount = amount.setScale(2, RoundingMode.HALF_UP);
     }
 
+    /**
+     * getAmount
+     * @return this BigMoney object
+     */
     public BigDecimal getAmount() {
         return this.amount;
     }

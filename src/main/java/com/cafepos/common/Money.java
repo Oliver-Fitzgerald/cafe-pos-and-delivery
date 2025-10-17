@@ -71,6 +71,17 @@ public final class Money implements Comparable<Money> {
     }
 
     /**
+     * minus
+     * Removes this Money object's amount with that of the passed Money object and returns a new Money object.
+     * Note: It leaves the original Money objects unchanged
+     * @return a new Money object containing the result of the minus
+     * @throws IllegalArgumentException if the quantity passed is negative
+     */
+    public Money minus(Money other) throws IllegalArgumentException { 
+        return of(this.amount.doubleValue() - other.getAmount().doubleValue());
+    }
+
+    /**
      * multiply
      * Multiplies this Money object's amount by the specified quantity and returns a new Money object.
      * Note: It leaves the original Money objects unchanged

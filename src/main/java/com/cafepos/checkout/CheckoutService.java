@@ -31,7 +31,7 @@ public final class CheckoutService {
         this.taxPercent = taxPercent;
     }
 
-    public String checkout(String recipe, int qty, PaymentStrategy paymentMethod) {
+    public String checkout(String recipe, int qty, PaymentStrategy paymentMethod, boolean print) {
 
         // - create product via `ProductFactory`, 
         Product product = factory.create(recipe);
@@ -48,6 +48,9 @@ public final class CheckoutService {
         order.addItem(item);
         order.pay(paymentMethod);
         // - delegate formatting to `ReceiptPrinter`.
-        return printer.format(recipe, qty, pricingResult);
+        String receipt = printer.format(recipe, qty, pricingResult);
+        if (print)
+            System.out.println(receipt);
+        return receipt;
     }
 }

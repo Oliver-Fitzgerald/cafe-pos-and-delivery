@@ -7,6 +7,8 @@ import com.cafepos.tax.FixedRateTaxPolicy;
 import com.cafepos.checkout.ReceiptPrinter;
 import com.cafepos.checkout.PricingService;
 import com.cafepos.checkout.PricingService.PricingResult;
+import com.cafepos.factory.ProductFactory;
+import com.cafepos.payment.CashPayment;
 
 public final class Week6Demo {
     public static void main(String[] args) {
@@ -18,7 +20,7 @@ public final class Week6Demo {
         PricingService pricing = new PricingService(new LoyaltyPercentDiscount(5), new FixedRateTaxPolicy(10));
         ReceiptPrinter printer = new ReceiptPrinter();
         CheckoutService checkout = new CheckoutService(new ProductFactory(), pricing, printer, 10);
-        String newReceipt = checkout.checkout("LAT+L", 2);
+        String newReceipt = checkout.checkout("LAT+L", 2, new CashPayment(),false);
 
         System.out.println("Old Receipt:\n" + oldReceipt);
         System.out.println("\nNew Receipt:\n" + newReceipt);

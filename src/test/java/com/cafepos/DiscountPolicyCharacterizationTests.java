@@ -15,6 +15,9 @@ import com.cafepos.tax.FixedRateTaxPolicy;
 import com.cafepos.payment.CashPayment;
 import com.cafepos.checkout.PricingService;
 import com.cafepos.discount.*;
+import com.cafepos.checkout.CheckoutService;
+import com.cafepos.checkout.ReceiptPrinter;
+import com.cafepos.factory.ProductFactory;
 
 public class DiscountPolicyCharacterizationTests {
 
@@ -26,7 +29,8 @@ public class DiscountPolicyCharacterizationTests {
     @Test
     void noDiscount_receiptValidation() {
         
-        String receipt = OrderManagerGod.process("ESP+SHOT+L", 10, new CashPayment(), new PricingService(new NoDiscount(), new FixedRateTaxPolicy(10)), false);
+        CheckoutService checkoutService = new CheckoutService(new ProductFactory(), new PricingService(new NoDiscount(), new FixedRateTaxPolicy(10)), new ReceiptPrinter(),10);
+        String receipt = checkoutService.checkout("ESP+SHOT+OAT", 2, new CashPayment(), false);
         assertTrue(!receipt.contains("Discount:"));
     }
 
@@ -39,7 +43,8 @@ public class DiscountPolicyCharacterizationTests {
     @MethodSource("receiptTestData")
     void discountPolicy_receiptValidation(DiscountPolicy policy) {
         
-        String receipt = OrderManagerGod.process("ESP+SHOT+L", 10, new CashPayment(), new PricingService(policy, new FixedRateTaxPolicy(10)), false);
+        CheckoutService checkoutService = new CheckoutService(new ProductFactory(), new PricingService(policy, new FixedRateTaxPolicy(10)), new ReceiptPrinter(),10);
+        String receipt = checkoutService.checkout("ESP+SHOT+OAT", 2, new CashPayment(), false);
         assertTrue(receipt.contains("Discount:"));
     }
     static Stream<Arguments> receiptTestData() {

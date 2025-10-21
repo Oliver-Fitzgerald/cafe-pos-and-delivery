@@ -30,14 +30,14 @@ public class PricingTests {
         PricingResult pricingResult = pricing.price(Money.of(10));
 
         // Expected subtotal
-        assertEquals(Money.of(10), pricing.subtotal());
+        assertEquals(Money.of(10), pricingResult.subtotal());
         // Expected discount
-        assertEquals(Money.of(0.5), pricing.discount());
+        assertEquals(Money.of(0.5), pricingResult.discount());
         // Expected tax
-        assertEquals(Money.of(0.95), pricing.tax());
+        assertEquals(Money.of(0.95), pricingResult.tax());
         // Expected taxPercent
-        assertEquals(10, pricing.taxPercent());
+        assertEquals(10, pricingResult.taxPercent());
         // Expected total
-        assertEquals(Money.of(10.45), pricing.total());
+        assertEquals(Money.of(10.45), pricingResult.total());
     }
 }

@@ -53,4 +53,23 @@ public final class CheckoutService {
             System.out.println(receipt);
         return receipt;
     }
+
+    public String checkout(Order order, PaymentStrategy paymentMethod, boolean print) {
+
+        // - delegate pricing to `PricingService`, 
+        Money total = Money.of(0);
+        for (LineItem item : order.items())
+            total = total.add(item.lineTotal());
+        PricingService.PricingResult pricingResult = pricing.price(total);
+        
+        // - delegate payment to a `PaymentStrategy`
+        // Adapt to your Week-3 signature; if your strategy expects an Order, pass the real one here.
+        order.pay(paymentMethod);
+
+        // - delegate formatting to `ReceiptPrinter`.
+        String receipt = printer.format(order, pricingResult);
+        if (print)
+            System.out.println(receipt);
+        return receipt;
+    }
 }

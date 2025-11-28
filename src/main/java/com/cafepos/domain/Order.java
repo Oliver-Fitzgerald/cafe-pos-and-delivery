@@ -147,4 +147,13 @@ public final class Order implements OrderPublisher {
     public void markReady() {
         notifyObservers(this, OrderEvents.READY);
     }
+
+    /**
+     * removeLastItem
+     * removes the last LineItem added to the current order
+     */
+    public void removeLastItem() {
+        if (items.size() > 0)
+            items.remove(items.size() -1);
+    }
 }

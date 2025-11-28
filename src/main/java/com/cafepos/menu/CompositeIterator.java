@@ -17,8 +17,8 @@ public final class CompositeIterator implements Iterator<MenuComponent> {
     @Override public boolean hasNext() {
 
         while (!stack.isEmpty()) {
-        if (stack.peek().hasNext())
-            return true;
+            if (stack.peek().hasNext())
+                return true;
             stack.pop();
         }
         return false;

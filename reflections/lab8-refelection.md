@@ -7,12 +7,11 @@ we keep everything in one layered monolith for now, and what seams (like Payment
 Notifications) might become separate services later. You capture this in a short README
 note. Write a 150–200 word note in your README answering:
 
-    1. Why did you choose a Layered Monolith (for now) rather than partitioning into multiple services?
+1. Why did you choose a Layered Monolith (for now) rather than partitioning into multiple services?
 
-    2. Which seams are natural candidates for future partitioning (e.g., Payments, Notifications)?
+2. Which seams are natural candidates for future partitioning (e.g., Payments, Notifications)?
 
-    3. What are the connectors/protocols you would define if splitting (events, REST APIs)? 
-    Keep the system simple today, but be deliberate about future evolution. 
+3. What are the connectors/protocols you would define if splitting (events, REST APIs)? Keep the system simple today, but be deliberate about future evolution. 
 
 ## Answer
 

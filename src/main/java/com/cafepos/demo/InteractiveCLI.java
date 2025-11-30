@@ -14,6 +14,7 @@ import com.cafepos.observers.*;
 import com.cafepos.checkout.*;
 import com.cafepos.discount.*;
 import com.cafepos.tax.*;
+import com.cafepos.checkout.CheckoutService;
 
 public final class InteractiveCLI {
 

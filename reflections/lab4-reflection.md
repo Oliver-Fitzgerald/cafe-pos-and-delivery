@@ -1,4 +1,6 @@
-Questions
+# Lab 4 Reflection
+
+## Questions
 
 1. Explain why you chose your pricing interface, identify one place where you preserved the Open/Closed Principle, and describe what would be required to add a new add-on next week.
 

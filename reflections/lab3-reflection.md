@@ -1,4 +1,6 @@
-Questions
+# Lab 3 Reflection
+
+## Questions
 
 1. How does the Observer pattern improve decoupling in the Café POS system?
 

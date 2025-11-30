@@ -1,4 +1,6 @@
-Questions
+# Lab 6 Reflection
+
+## Questions
 
 1. Where does Command decouple UI from business logic in your codebase? 
 In the posRemote class.

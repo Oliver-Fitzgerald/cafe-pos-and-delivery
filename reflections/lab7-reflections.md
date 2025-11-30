@@ -1,6 +1,8 @@
-# State Transition Tables
+# Lab 7 Reflection
 
-## Allowed State Table
+## State Transition Tables
+
+### Allowed State Table
 
 | State     | pay | prepare | markReady | deliver | cancel |
 |-----------|-----|---------|-----------|---------|--------|
@@ -11,7 +13,7 @@
 | Cancelled |  ✗  |    ✗    |     ✗     |    ✗    |   ✗    |
 
 
-## Target State Table
+### Target State Table
 
 |   State   |  Target   |
 |-----------|-----------|
@@ -21,7 +23,7 @@
 | Delivered |    N/A    |
 | Cancelled |    N/A    |
 
-# Questions
+## Questions
 
 1. Where did you choose **safety** over **transparency** in your Composite API and why?
 In the menu builder composite API I allowed leaf nodes (MenuItem) I implmented the itterator method
